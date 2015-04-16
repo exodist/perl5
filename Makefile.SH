@@ -1310,9 +1310,13 @@ _cleaner2:
 	-rmdir lib/autodie/Scope lib/autodie lib/XS lib/Win32API lib/VMS
 	-rmdir lib/Unicode/Collate/Locale lib/Unicode/Collate/CJK
 	-rmdir lib/Unicode/Collate lib/Tie/Hash lib/Thread lib/Text
-	-rmdir lib/Test/use lib/Test/Tester lib/Test/Builder/Tester
-	-rmdir lib/Test/Builder/IO lib/Test/Builder lib/Test lib/Term
-	-rmdir lib/TAP/Parser/YAMLish lib/TAP/Parser/SourceHandler
+	-rmdir lib/Test/use lib/Test/Tutorial lib/Test/Tester
+	-rmdir lib/Test/Stream/Tester/Events lib/Test/Stream/Tester/Checks
+	-rmdir lib/Test/Stream/Tester lib/Test/Stream/HashBase
+	-rmdir lib/Test/Stream/Exporter lib/Test/Stream/ExitMagic
+	-rmdir lib/Test/Stream/Event lib/Test/Stream lib/Test/More/DeepCheck
+	-rmdir lib/Test/More lib/Test/Builder/Tester lib/Test/Builder lib/Test
+	-rmdir lib/Term lib/TAP/Parser/YAMLish lib/TAP/Parser/SourceHandler
 	-rmdir lib/TAP/Parser/Scheduler lib/TAP/Parser/Result
 	-rmdir lib/TAP/Parser/Iterator lib/TAP/Parser lib/TAP/Harness
 	-rmdir lib/TAP/Formatter/File lib/TAP/Formatter/Console
