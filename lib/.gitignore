@@ -103,6 +103,7 @@
 /IO.pm
 /IO/
 /IPC/
+/Importer.pm
 /JSON/
 /List/
 /Locale/

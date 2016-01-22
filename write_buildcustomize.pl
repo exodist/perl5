@@ -35,6 +35,7 @@ my @toolchain = qw(cpan/AutoLoader/lib
 		   ext/re
 		   dist/Term-ReadLine/lib
                    dist/Exporter/lib
+                   cpan/Importer/lib
                    ext/File-Find/lib
                    cpan/Text-Tabs/lib
 		   dist/constant/lib

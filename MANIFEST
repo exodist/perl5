@@ -1297,6 +1297,11 @@ cpan/HTTP-Tiny/t/170_keepalive.t
 cpan/HTTP-Tiny/t/BrokenCookieJar.pm
 cpan/HTTP-Tiny/t/SimpleCookieJar.pm
 cpan/HTTP-Tiny/t/Util.pm
+cpan/Importer/lib/Importer.pm
+cpan/Importer/t/export_fail.t
+cpan/Importer/t/missing.t
+cpan/Importer/t/Simple.t
+cpan/Importer/t/units.t
 cpan/IO-Compress/bin/zipdetails				IO::Compress
 cpan/IO-Compress/lib/Compress/Zlib.pm			IO::Compress
 cpan/IO-Compress/lib/File/GlobMapper.pm			IO::Compress
@@ -3102,10 +3107,10 @@ dist/encoding-warnings/t/4-lexical.t	tests for encoding::warnings
 dist/Env/lib/Env.pm		Map environment into ordinary variables
 dist/Env/t/array.t		See if Env works for arrays
 dist/Env/t/env.t		See if Env works
-dist/Exporter/lib/Exporter/Heavy.pm	Complicated routines for Exporter
-dist/Exporter/lib/Exporter.pm		Exporter base class
-dist/Exporter/t/Exporter.t		See if Exporter works
-dist/Exporter/t/warn.t			See if Exporter respects warning handlers
+dist/Exporter/lib/Exporter/Heavy.pm
+dist/Exporter/lib/Exporter.pm
+dist/Exporter/t/Exporter.t
+dist/Exporter/t/warn.t
 dist/ExtUtils-CBuilder/Changes		EU-CB change log
 dist/ExtUtils-CBuilder/lib/ExtUtils/CBuilder/Base.pm		Base class for ExtUtils::CBuilder methods
 dist/ExtUtils-CBuilder/lib/ExtUtils/CBuilder/Platform/aix.pm	CBuilder methods for AIX

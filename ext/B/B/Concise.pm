@@ -12,9 +12,9 @@ package B::Concise;
 use strict; # use #2
 use warnings; # uses #3 and #4, since warnings uses Carp
 
-use Exporter (); # use #5
+use Exporter (); # use #5 and #6 since this uses Importer
 
-our $VERSION   = "0.996";
+our $VERSION   = "0.997";
 our @ISA       = qw(Exporter);
 our @EXPORT_OK = qw( set_style set_style_standard add_callback
 		     concise_subref concise_cv concise_main
@@ -25,7 +25,7 @@ our %EXPORT_TAGS =
       cb	=> [qw( add_callback )],
       mech	=> [qw( concise_subref concise_cv concise_main )],  );
 
-# use #6
+# use #7
 use B qw(class ppname main_start main_root main_cv cstring svref_2object
 	 SVf_IOK SVf_NOK SVf_POK SVf_IVisUV SVf_FAKE OPf_KIDS OPf_SPECIAL
 	 CVf_ANON PAD_FAKELEX_ANON PAD_FAKELEX_MULTI SVf_ROK);
@@ -226,7 +226,7 @@ sub concise_specials {
     my($name, $order, @cv_s) = @_;
     my $i = 1;
     if ($name eq "BEGIN") {
-	splice(@cv_s, 0, 8); # skip 7 BEGIN blocks in this file. NOW 8 ??
+	splice(@cv_s, 0, 9); # skip 9 BEGIN blocks in this file.
     } elsif ($name eq "CHECK") {
 	pop @cv_s; # skip the CHECK block that calls us
     }

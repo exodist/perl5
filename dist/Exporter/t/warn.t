@@ -25,7 +25,9 @@ BEGIN {
 
 package Foo;
 Exporter->import("import");
-@EXPORT_OK = "bar";
+@EXPORT_OK = qw(bar);
+@EXPORT_FAIL = qw(bar);
+sub export_fail { shift; @_ }
 
 package main;
 
@@ -33,7 +35,7 @@ package main;
     my @warn;
 
     local $SIG{__WARN__} = sub { push @warn, join "", @_ };
-    eval { Foo->import(":quux") };
-    ok(grep(/"quux" is not defined/, @warn), "warnings captured");
+    eval { Foo->import("bar") };
+    ok(grep(/"bar" is not implemented by the Foo module on this architecture/, @warn), "warnings captured");
 }
 

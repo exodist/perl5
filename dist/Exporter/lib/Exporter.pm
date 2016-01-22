@@ -1,97 +1,106 @@
 package Exporter;
+no warnings 'once';
 
-require 5.006;
-
-# Be lean.
-#use strict;
-#no strict 'refs';
-
-our $Debug = 0;
+our $VERSION = '5.73';
+our @EXPORT_OK = qw/import/;
 our $ExportLevel = 0;
-our $Verbose ||= 0;
-our $VERSION = '5.72';
-our (%Cache);
 
-sub as_heavy {
-  require Exporter::Heavy;
-  # Unfortunately, this does not work if the caller is aliased as *name = \&foo
-  # Thus the need to create a lot of identical subroutines
-  my $c = (caller(1))[3];
-  $c =~ s/.*:://;
-  \&{"Exporter::Heavy::heavy_$c"};
-}
+use Importer Importer => qw/optimal_import/;
 
 sub export {
-  goto &{as_heavy()};
+    my ($from, $into, @args) = @_;
+
+    my @caller = caller(0);
+
+    return if optimal_import($from, $into, \@caller, @args);
+
+    my $self = Importer->new(
+        from   => $from,
+        caller => \@caller,
+    );
+
+    $self->do_import($into, @args);
 }
 
 sub import {
-  my $pkg = shift;
-  my $callpkg = caller($ExportLevel);
+    my $from = shift;
 
-  if ($pkg eq "Exporter" and @_ and $_[0] eq "import") {
-    *{$callpkg."::import"} = \&import;
-    return;
-  }
+    my @caller = caller($ExportLevel);
+    my $into = $caller[0];
 
-  # We *need* to treat @{"$pkg\::EXPORT_FAIL"} since Carp uses it :-(
-  my $exports = \@{"$pkg\::EXPORT"};
-  # But, avoid creating things if they don't exist, which saves a couple of
-  # hundred bytes per package processed.
-  my $fail = ${$pkg . '::'}{EXPORT_FAIL} && \@{"$pkg\::EXPORT_FAIL"};
-  return export $pkg, $callpkg, @_
-    if $Verbose or $Debug or $fail && @$fail > 1;
-  my $export_cache = ($Cache{$pkg} ||= {});
-  my $args = @_ or @_ = @$exports;
+    return if optimal_import($from, $into, \@caller, @_);
 
-  if ($args and not %$export_cache) {
-    s/^&//, $export_cache->{$_} = 1
-      foreach (@$exports, @{"$pkg\::EXPORT_OK"});
-  }
-  my $heavy;
-  # Try very hard not to use {} and hence have to  enter scope on the foreach
-  # We bomb out of the loop with last as soon as heavy is set.
-  if ($args or $fail) {
-    ($heavy = (/\W/ or $args and not exists $export_cache->{$_}
-               or $fail and @$fail and $_ eq $fail->[0])) and last
-                 foreach (@_);
-  } else {
-    ($heavy = /\W/) and last
-      foreach (@_);
-  }
-  return export $pkg, $callpkg, ($args ? @_ : ()) if $heavy;
-  local $SIG{__WARN__} = 
-	sub {require Carp; &Carp::carp} if not $SIG{__WARN__};
-  # shortcut for the common case of no type character
-  *{"$callpkg\::$_"} = \&{"$pkg\::$_"} foreach @_;
+    my $self = Importer->new(
+        from   => $from,
+        caller => \@caller,
+    );
+
+    $self->do_import($into, @_);
 }
-
-# Default methods
-
-sub export_fail {
-    my $self = shift;
-    @_;
-}
-
-# Unfortunately, caller(1)[3] "does not work" if the caller is aliased as
-# *name = \&foo.  Thus the need to create a lot of identical subroutines
-# Otherwise we could have aliased them to export().
 
 sub export_to_level {
-  goto &{as_heavy()};
+    my $from = shift;
+    my ($level, $ignore, @args) = @_;
+
+    my @caller = caller(0);
+    my $into = caller($level);
+
+    return if optimal_import($from, $into, \@caller, @args);
+
+    my $self = Importer->new(
+        from   => $from,
+        caller => \@caller,
+    );
+
+    $self->do_import($into, @args);
 }
 
+sub export_fail { shift; @_ }
+
+sub require_version {
+    my ($self, $wanted) = @_;
+    my $pkg = ref $self || $self;
+    return ${pkg}->VERSION($wanted);
+}
+
+my $push_tags = sub {
+    my $from = shift;
+    my ($var, @tags) = @_;
+
+    my $export      = \@{"$from\::$var"};
+    my $export_tags = \%{"$from\::EXPORT_TAGS"};
+
+    my @nontag = ();
+    for my $tag (@tags ? @tags : keys %$export_tags) {
+        my $tag_list = $export_tags->{$tag};
+        $tag_list ? push @$export => @$tag_list : push @nontag => $tag;
+    };
+
+    return unless @nontag && $^W;
+
+    require Carp;
+    Carp::carp(join(", ", @nontag) . " are not tags of $from");
+};
+
 sub export_tags {
-  goto &{as_heavy()};
+    my $from = caller(0);
+    $from->$push_tags('EXPORT', @_);
 }
 
 sub export_ok_tags {
-  goto &{as_heavy()};
+    my $from = caller(0);
+    $from->$push_tags('EXPORT_OK', @_);
 }
 
-sub require_version {
-  goto &{as_heavy()};
-}
+my %HEAVY_VARS = (
+    IMPORTER_MENU => 'CODE',  # Origin package has a custom menu
+    EXPORT_FAIL   => 'ARRAY', # Origin package has a failure handler
+    EXPORT_GEN    => 'HASH',  # Origin package has generators
+    EXPORT_ANON   => 'HASH',  # Origin package has anonymous exports
+    EXPORT_MAGIC  => 'HASH',  # Origin package has magic to apply post-export
+);
+
+no Importer;
 
 1;
 __END__
